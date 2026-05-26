@@ -1,1 +1,5 @@
 .git
+
+
+# Ignore MaxMind Binary Databases
+db/*.mmdb
