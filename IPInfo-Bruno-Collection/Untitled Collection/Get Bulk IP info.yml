@@ -1,0 +1,24 @@
+info:
+  name: Get Bulk IP info
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{BASE_URL}}/v1/ip/bulk"
+  headers:
+    - name: User-Agent
+      value: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0
+  body:
+    type: json
+    data: |-
+      {
+        "ips": ["1.1.1.1", "75.432.77.453"]
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,55 @@
+name: Update GeoIP Databases
+
+on:
+  schedule:
+    # Runs every 3 days at 3:00 AM UTC to catch MaxMind's bi-weekly updates
+    - cron: "0 3 */3 * *"
+  workflow_dispatch: # Allows manual triggering from GitHub Actions tab
+
+jobs:
+  update-db:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Download Latest GeoLite2 City & ASN Databases
+        run: |
+          # Create database directory if not exists
+          mkdir -p db
+          
+          # Clean up old database files to prevent stale data conflicts
+          rm -f db/GeoLite2-City.mmdb
+          rm -f db/GeoLite2-ASN.mmdb
+          
+          # Download fresh City database
+          curl -L "https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-City.mmdb" -o db/GeoLite2-City.mmdb
+          
+          # 🔥 Download fresh ASN database
+          curl -L "https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-ASN.mmdb" -o db/GeoLite2-ASN.mmdb
+
+      - name: Check for Changes
+        id: verify_diff
+        run: |
+          # Check if git detects any binary modification in the db/ folder
+          git status --porcelain
+          if [ -n "$(git status --porcelain db/)" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Databases have been updated with new records."
+          else
+            echo "No updates found in the upstream registries."
+          fi
+
+      - name: Commit and Push Updates
+        if: steps.verify_diff.outputs.changed == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          # Stage both updated binary files
+          git add db/GeoLite2-City.mmdb db/GeoLite2-ASN.mmdb
+          
+          # Commit with skip-ci flag to prevent infinite workflow loops
+          git commit -m "chore: auto-update GeoIP City and ASN databases [skip ci]"
+          git push

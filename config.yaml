@@ -1,0 +1,45 @@
+# =========================================================================
+# Roticeh IPInfo - Configuration File
+# =========================================================================
+
+# HTTP Server, Networking, and Base URL settings
+server:
+  name: "IPInfo"
+
+  # if your change the port, make sure to update the EXPOSE directive in the Dockerfile as well
+  port: 9755
+  body_limit: 5 # Maximum allowed request body size in Megabytes (MB)
+  base_url: "https://ipinfo.roticeh.com"
+  
+  # WARNING: Critical security value. Overwrite this via SECRET_TOKEN env variable in prod!
+  secret_key: "rtch_live_change_this_secret_key_in_production_environment"
+
+  # Precise timing constraints for HTTP connections to prevent slow-client attacks
+  timeouts:
+    read: 5s
+    write: 10s
+    idle: 60s
+
+# File paths to the MaxMind binary databases (.mmdb) loaded into memory
+database:
+  path: "./db/GeoLite2-City.mmdb"
+  asn_path: "./db/GeoLite2-ASN.mmdb"
+
+# Security Policies, CORS and Global Rate Limiting
+security:
+  # Cross-Origin Resource Sharing (CORS) rules for frontend integrations
+  cors:
+    allowed_origins:
+      - "https://**.roticeh.com"
+      - "https://**.trymagic.xyz"
+      - "https://**.movixar.com"
+      - "http://localhost:*" # Local frontend testing layout
+    allowed_headers: "Origin, Content-Type, Accept, Authorization, User-Agent, X-Requested-With"
+    allowed_methods: "GET, POST, OPTIONS"
+    allow_credentials: true
+    max_age: 86400 # 24 Hours preflight cache duration
+
+  # Traffic throttling rules to prevent API abuse
+  rate_limit:
+    max: 200 # Max requests allowed within the window
+    expiration: 1m # Time window for the rate limit
