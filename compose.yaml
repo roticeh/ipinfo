@@ -22,7 +22,7 @@ services:
 
     volumes:
       - ./db:/dist/db
-      - ./config.yaml:/dist/config.yaml
+      # - ./config.yaml:/dist/config.yaml
 
         
     deploy:
