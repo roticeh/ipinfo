@@ -1,6 +1,6 @@
-name: "{{BASE_URL}}"
+name: ENVS
 variables:
   - name: BASE_URL
-    value: http://ipinfo.roticeh.com/v1
+    value: https://ipinfo.roticeh.com/v1
   - name: LOCAL_BASE_URL
     value: http://localhost:9755/v1

@@ -11,6 +11,12 @@ import (
 )
 
 func SetupRoutes(app fiber.Router) {
+
+	app.Get("/health", handlers.HealthCheck, middleware.PublicCors(), middleware.GeneralLimiter(config.RateLimitConfig{
+		Max:        100,
+		Expiration: 1 * time.Minute,
+	}))
+
 	ipGroup := app.Group("/ip")
 	ipGroupWithGuard := ipGroup.Group("", middleware.CorsGuard(), middleware.GeneralLimiter())
 

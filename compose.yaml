@@ -24,6 +24,9 @@ services:
       - ./db:/dist/db
         # - ./config.yaml:/dist/config.yaml
 
+    labels:
+      - "traefik.http.services.ipinfo.loadbalancer.server.port=9755"
+
         
     deploy:
       resources:
