@@ -44,12 +44,14 @@ services:
 
   
     healthcheck:
+      disable: true
+    # healthcheck:
 
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9755/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
+    #   test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9755/health"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 10s
 
 
   db-updater:
