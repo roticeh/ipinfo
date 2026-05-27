@@ -12,7 +12,7 @@ server:
   base_url: "https://ipinfo.roticeh.com"
   
   # WARNING: Critical security value. Overwrite this via SECRET_TOKEN env variable in prod!
-  secret_key: "rtch_live_change_this_secret_key_in_production_environment"
+  secret_key: "rtch_live_change_this_secret_key_in_production_environment_okey"
 
   # Precise timing constraints for HTTP connections to prevent slow-client attacks
   timeouts:
