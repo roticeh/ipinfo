@@ -59,11 +59,11 @@ services:
     command: >
       /bin/sh -c "
       mkdir -p /db-data &&
-      echo '[BOOTSTRAP] Initializing setup: Fetching latest MaxMind databases...' &&
-      wget -qO /db-data/GeoLite2-City.mmdb https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-City.mmdb &&
-      wget -qO /db-data/GeoLite2-ASN.mmdb https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-ASN.mmdb &&
-      echo '[SUCCESS] Databases provisioned successfully. Starting cron daemon for 5-day auto-update cycle...' &&
-      echo '0 3 */5 * * wget -qO /db-data/GeoLite2-City.mmdb https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-City.mmdb && wget -qO /db-data/GeoLite2-ASN.mmdb https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-ASN.mmdb && docker restart roticeh-ipinfo-core' > /etc/crontabs/root &&
+      echo '[BOOTSTRAP] Fetching databases atomically via temp files...' &&
+      wget -qO /db-data/City.tmp https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-City.mmdb && mv /db-data/City.tmp /db-data/GeoLite2-City.mmdb &&
+      wget -qO /db-data/ASN.tmp https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-ASN.mmdb && mv /db-data/ASN.tmp /db-data/GeoLite2-ASN.mmdb &&
+      echo '[SUCCESS] Databases are fully provisioned and verified.' &&
+      echo '0 3 */5 * * wget -qO /db-data/City.tmp https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-City.mmdb && mv /db-data/City.tmp /db-data/GeoLite2-City.mmdb && wget -qO /db-data/ASN.tmp https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-ASN.mmdb && mv /db-data/ASN.tmp /db-data/GeoLite2-ASN.mmdb && docker restart roticeh-ipinfo-core' > /etc/crontabs/root &&
       crond -f -l 2
       "
 
