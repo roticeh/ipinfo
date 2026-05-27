@@ -30,7 +30,7 @@ WORKDIR /dist
 
 COPY --from=builder /app/ipinfo .
 COPY --from=builder /app/config.yaml .
-COPY --from=builder /app/db/ ./db/
+# COPY --from=builder /app/db/ ./db/
 
 
 EXPOSE 9755
