@@ -1,0 +1,6 @@
+name: "{{BASE_URL}}"
+variables:
+  - name: BASE_URL
+    value: http://ipinfo.roticeh.com/v1
+  - name: LOCAL_BASE_URL
+    value: http://localhost:9755/v1

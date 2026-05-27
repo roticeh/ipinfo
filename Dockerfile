@@ -15,9 +15,9 @@ RUN go mod download
 COPY . .
 
 
-RUN mkdir -p db && \
-    wget -qO db/GeoLite2-City.mmdb "https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-City.mmdb" && \
-    wget -qO db/GeoLite2-ASN.mmdb "https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-ASN.mmdb"
+# RUN mkdir -p db && \
+#     wget -qO db/GeoLite2-City.mmdb "https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-City.mmdb" && \
+#     wget -qO db/GeoLite2-ASN.mmdb "https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-ASN.mmdb"
 
 RUN CGO_ENABLED=0 GOOS=linux go build -mod=mod -ldflags="-w -s" -o ipinfo ./main.go
 
