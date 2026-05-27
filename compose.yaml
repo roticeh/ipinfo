@@ -55,7 +55,7 @@ services:
     restart: always
     volumes:
       - ./db:/db-data
-        - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock
     command: >
       /bin/sh -c "
       mkdir -p /db-data &&
