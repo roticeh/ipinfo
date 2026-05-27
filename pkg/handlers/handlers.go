@@ -5,16 +5,21 @@ import (
 	"net"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/oschwald/geoip2-golang"
 	"github.com/ua-parser/uap-go/uaparser"
 
+	cache "github.com/roticeh/ipinfo/pkg/cache"
 	utils "github.com/roticeh/ipinfo/pkg/utils"
 )
 
 var GeoCityDB *geoip2.Reader
 var GeoASNDB *geoip2.Reader
+var uaParser *uaparser.Parser
+
+var ipCache *cache.Store[*IPInfoResponse]
 
 type LocationDetail struct {
 	Country    string  `json:"country"`
@@ -63,13 +68,24 @@ type BulkIPResponse struct {
 	Results map[string]interface{} `json:"results"`
 }
 
-var uaParser *uaparser.Parser
-
 func init() {
 	uaParser = uaparser.NewFromSaved()
+
+	ipCache = cache.New[*IPInfoResponse](cache.Config{
+		TTL:           5 * time.Minute,
+		SweepInterval: 10 * time.Minute,
+		MaxEntries:    10000,
+	})
 }
 
 func coreResolveIP(ipStr string, uaStr string) (*IPInfoResponse, error) {
+
+	cacheKey := fmt.Sprintf("%s|%s", ipStr, uaStr)
+
+	if cachedData, found := ipCache.Get(cacheKey); found {
+		return cachedData, nil
+	}
+
 	parsedIP := net.ParseIP(ipStr)
 	if parsedIP == nil {
 		return nil, fmt.Errorf("invalid_ip_format")
@@ -204,14 +220,17 @@ func coreResolveIP(ipStr string, uaStr string) (*IPInfoResponse, error) {
 		}
 	}
 
-	return &IPInfoResponse{
+	response := &IPInfoResponse{
 		// Success:  true,
 		// Status:   200,
 		ClientIP: ipStr,
 		Location: locDetail,
 		Network:  netDetail,
 		Device:   devDetail,
-	}, nil
+	}
+
+	ipCache.Set(cacheKey, response)
+	return response, nil
 }
 
 // GetMyIpInfo: request user IP and UA information, analyze and return as JSON response. This is the core API endpoint for client self-analysis. It extracts the client's IP from headers (X-Forwarded-For, X-Real-IP) or falls back to c.IP(). It then calls coreResolveIP to get location, network, and device details.

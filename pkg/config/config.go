@@ -73,8 +73,6 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("server.timeouts.write", 10*time.Second)
 	v.SetDefault("server.timeouts.idle", 60*time.Second)
 
-
-
 	// Database
 	v.SetDefault("database.path", "./db/GeoLite2-City.mmdb")
 	v.SetDefault("database.asn_path", "./db/GeoLite2-ASN.mmdb")
